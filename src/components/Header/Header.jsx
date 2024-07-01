@@ -5,82 +5,92 @@ const Header = () => {
   return (
     <>
       <div className="w-full h-[75px] px-10 py-4 flex  justify-between bg-sky-400 text-center">
-        <Link to="/">
+        <Link to="/" className="flex flex-wrap  place-items-center rounded  ">
           <img src="../../../src/images/notebookpencil.png" alt="logo"  className="w-auto h-[40px] rounded "/>
+          <span className="font-bold hover:text-black  text-gray-800 ">notebook.</span>
         </Link>
-        <div className="flex justify-between w-[25%]">
+        <div className="flex  flex-wrap justify-between w-[25%]">
           <NavLink
             to="/"
             className={({ isActive }) =>
              `
-            hover:text-red-700
-            hover:bg-gray-200
+            font-bold
+            
+            hover:text-black
+            hover:font-extrabold
+            
             border-solid border-white
             rounded
-            px-2
-            py-1
-            ${isActive ? "text-red-700" : "text-gray-700"}
+           px-2
+             py-2
+            ${isActive ? "text-black" : "text-gray-700"}
             `}
           >
-            Home
+            HOME
           </NavLink>
           <NavLink
             to="about"
             className={({ isActive }) =>
               `
-             hover:text-red-700
-             hover:bg-gray-200
+            font-bold
+             hover:text-black
+             hover:font-extrabold
+             
              border-solid border-white
              rounded
              px-2
-             py-1
-             ${isActive ? "text-red-700" : "text-gray-700"}
+             py-2
+             ${isActive ? "text-black" : "text-gray-700"}
              `}
           >
-            About
+            ABOUT
           </NavLink>
           <NavLink
             to="contact"
             className={({ isActive }) =>
               `
-             hover:text-red-700
-             hover:bg-gray-200
+            font-bold
+             hover:text-black
+             hover:font-extrabold
              border-solid border-white
              rounded
              px-2
-             py-1
-             ${isActive ? "text-red-700" : "text-gray-700"}
+             py-2
+             ${isActive ? "text-black" : "text-gray-700"}
              `}
           >
-            ContactUs
+            CONTACT
           </NavLink>
           <NavLink
             to="github"
             className={({ isActive }) =>
               `
-             hover:text-red-700
-             hover:bg-gray-200
+            font-bold
+             hover:text-black
+             hover:font-extrabold
              border-solid border-white
              rounded
              px-2
-             py-1
-             ${isActive ? "text-red-700" : "text-gray-700"}
+             py-2
+             ${isActive ? "text-black" : "text-gray-700"}
              `}
           >
-            Github
+            GITHUB
           </NavLink>
         </div>
-        <div>
+        <div className="flex flex-wrap">
         <NavLink
             to="login"
             className={({ isActive }) =>
               `
              hover:text-green-700
-             hover:bg-gray-200
+             hover:bg-slate-700
+             font-bold
              border-solid border-white
-             rounded
-             px-2
-             py-1
+             rounded-bl-xl
+             rounded-tl-xl
+            px-2
+             py-2
             
              `}
           >
@@ -91,14 +101,16 @@ const Header = () => {
             className={({ isActive }) =>
               `
              hover:text-green-700
-             hover:bg-gray-200
-             border-solid
-            border-white
+             
+             font-bold
+            
             bg-slate-700
             text-orange-700
-             rounded
+             rounded-tr-xl
+             rounded-br-xl
+             
              px-2
-             py-1
+             py-2
             
              `}
           >
