@@ -1,14 +1,16 @@
 import React from 'react';
 
+
+
 const Todo = () => {
  
- 
+
 
   return (
    <>
    <div className="bg-gray-100 flex items-center justify-center h-screen">
-      <div className="w-full max-w-xl">
-        <h1 className="text-center text-2xl font-bold mb-4">Todo List</h1>
+      <div className="w-full max-w-xl ">
+        <h1 className="text-center text-2xl font-bold mb-4 text-gray-700">Todo List</h1>
         <div className="bg-white shadow-2xl rounded-xl px-8 pt-6 pb-8 mb-4 flex ">
           
             <input
@@ -28,6 +30,7 @@ const Todo = () => {
          
          
         </div>
+        <div className='bg-white shadow-2xl rounded-xl px-8 pt-6 pb-8 mb-4 font-extrabold text-2xl font-mono'>Type some Todos</div>
       </div>
       </div>
       </>

@@ -3,12 +3,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import Home from './components/Home.jsx'
-import Contact from './components/Contact.jsx'
-import Github from './components/Github.jsx'
-import About from './components/About.jsx'
-import Login from './components/Login.jsx'
-import Signup from './components/Signup.jsx'
+import {Home,Contact,Github,About,Login,Signup,Verify} from './components/index.js'
+import store from './store/store.js'
+import { Provider } from 'react-redux'
+
 
 const router = createBrowserRouter([
   {
@@ -20,32 +18,41 @@ const router = createBrowserRouter([
         element:<Home/>
       },
       {
-        path:'about',
+        path:'/about',
         element:<About/>
       },
       {
-        path:'contact',
+        path:'/contact',
         element:<Contact/>
       },
       {
-        path:'github',
+        path:'/github',
         element:<Github/>
       },
       {
-        path:'login',
+        path:'/login',
         element:<Login/>
       },
       {
-        path:'signup',
+        path:'/signup',
         element:<Signup/>
-      }
+      },
+     
     ]
+
+  },
+  {
+  path:'/verify',
+  element:<Verify/>
   }
 ])
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <Provider store={store}>
     <RouterProvider router={router} />
+    </Provider>
+    
   </React.StrictMode>,
 )
