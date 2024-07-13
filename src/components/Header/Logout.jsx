@@ -23,7 +23,7 @@ const Logout = () => {
          hover:text-green-700
                font-bold
              bg-slate-700
-              text-orange-700
+              text-orange-600
            rounded-tr-xl
              rounded-xl
              
