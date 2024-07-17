@@ -6,7 +6,7 @@ import { ID } from "appwrite";
 import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
- const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -42,16 +42,16 @@ const SignupForm = () => {
   };
 
   const registerData = async ({ email, password, name }) => {
-    
     try {
       var createUser = await account.create(ID.unique(), email, password, name);
-      
-      // var verifyUser = await account.createVerification('http://localhost:5173/verify');
-      if (createUser) {
-        navigate("/login")
+      var session = await account.createEmailPasswordSession(email,password);
+      var sendVerifyLink = await account.createVerification(
+        "http://localhost:5173/verify"
+      );
+      if (sendVerifyLink) {
+        alert("Verification e-mail Sent");
+        navigate("/login");
       }
-      
-      
     } catch (error) {
       setFormError(error.message);
     }
@@ -60,7 +60,6 @@ const SignupForm = () => {
   return (
     <div className="bg-gray-100 flex items-center justify-center h-screen">
       <div className="w-full max-w-md">
-        
         <form
           className="bg-white shadow-md rounded-xl px-8 pt-6 pb-8 mb-4"
           onSubmit={handleSubmit(create)}

@@ -9,7 +9,7 @@ const Logout = () => {
   const navigate = useNavigate();
 
   const logoutHandler = async () => {
-    const logoutSessions = await account.deleteSessions();
+    const logoutSessions = await account.deleteSession("current");
     if (logoutSessions) {
       dispatch(authLogout());
       navigate("/login");

@@ -1,4 +1,4 @@
-import Home from './Home.jsx'
+import Todo from './Todo.jsx'
 import Contact from './Contact.jsx'
 import Github from './Github.jsx'
 import About from './About.jsx'
@@ -7,9 +7,11 @@ import Signup from './Signup.jsx'
 import Header from './Header/Header.jsx'
 import Footer from './Footer/Footer.jsx'
 import Verify from './Verify.jsx'
+import Authlayer from './AuthRouteLayer.jsx'
+import Spinner from './Spinner.jsx'
 
 export {
-    Home,
+    Todo,
     Contact,
     Github,
     About,
@@ -17,7 +19,7 @@ export {
     Signup,
     Header,
     Footer,
-    Verify
-
-
+    Verify,
+    Authlayer,
+    Spinner
 }

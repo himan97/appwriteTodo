@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import {Home,Contact,Github,About,Login,Signup,Verify} from './components/index.js'
+import {Todo,Contact,Github,About,Login,Signup,Verify, Authlayer} from './components/index.js'
 import store from './store/store.js'
 import { Provider } from 'react-redux'
 
@@ -15,27 +15,45 @@ const router = createBrowserRouter([
     children : [
       {
         path:'/',
-        element:<Home/>
+        element:(
+        <Authlayer authentication>
+        <Todo/>
+      </Authlayer>)
       },
       {
         path:'/about',
-        element:<About/>
+        element:(
+          <Authlayer authentication>
+            <About/>
+          </Authlayer>)
       },
       {
         path:'/contact',
-        element:<Contact/>
+        element:(
+          <Authlayer authentication>
+            <Contact/>
+          </Authlayer>)
       },
       {
         path:'/github',
-        element:<Github/>
+        element:(
+        <Authlayer authentication>
+          <Github/>
+        </Authlayer>)
       },
       {
         path:'/login',
-        element:<Login/>
+        element:(
+        <Authlayer authentication= {false} >
+          <Login/>
+        </Authlayer>)
       },
       {
         path:'/signup',
-        element:<Signup/>
+        element:(
+        <Authlayer authentication= {false} >
+          <Signup/>
+        </Authlayer>)
       },
      
     ]

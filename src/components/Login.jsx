@@ -25,14 +25,19 @@ const Login = () => {
       );
       if (createSession) {
         const userData = await account.get();
+       
         
-        if (userData) {
+        if (userData.emailVerification) {
           dispatch(authLogin(userData));
           navigate("/");
+        }else{
+          var deleteSession = await account.deleteSession('current')
+          alert("User is Not Verified")
+          navigate("/login")
         }
       }
 
-      navigate("/");
+      
     } catch (error) {
       console.log(error);
     }

@@ -8,7 +8,7 @@ const Header = () => {
   return (
     <>
       <div className="w-full h-[75px] px-10 py-4 flex  justify-between bg-sky-400 text-center">
-        <Link to="/" className="flex flex-wrap  place-items-center rounded  ">
+        <div className="flex flex-wrap  place-items-center rounded  ">
           <img
             src="../../../src/images/notebookpencil.png"
             alt="logo"
@@ -17,7 +17,7 @@ const Header = () => {
           <span className="font-bold hover:text-black  text-gray-800 ">
             Notebook.
           </span>
-        </Link>
+        </div>
         <div className="flex  flex-wrap justify-between w-[25%]">
           {authStatus && (
             <NavLink
@@ -37,7 +37,7 @@ const Header = () => {
             `
               }
             >
-              HOME
+              DASHBOARD
             </NavLink>
           )}
           {authStatus && (
