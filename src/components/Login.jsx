@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useForm } from "react-hook-form";
 import account from "../appwrite/config";
-import { useNavigate } from "react-router-dom";
+import {Link,  useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login as authLogin} from "../store/authSlice";
 
@@ -13,7 +13,6 @@ const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { register, handleSubmit } = useForm();
 
-  //togglePasswordVisibility is a function of Hide/Show password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -111,6 +110,7 @@ const Login = () => {
                 Sign In
               </button>
             </div>
+            <Link to="/signup">New User CLick Here !</Link>
           </form>
         </div>
       </div>

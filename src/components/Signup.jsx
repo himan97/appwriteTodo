@@ -3,7 +3,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useForm } from "react-hook-form";
 import account from "../appwrite/config";
 import { ID } from "appwrite";
-import { useNavigate } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
+
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const SignupForm = () => {
     handleSubmit,
     watch,
     setError,
+    reset,
     formState: { errors },
   } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -44,13 +46,13 @@ const SignupForm = () => {
   const registerData = async ({ email, password, name }) => {
     try {
       var createUser = await account.create(ID.unique(), email, password, name);
-      var session = await account.createEmailPasswordSession(email,password);
+      var session = await account.createEmailPasswordSession(email, password);
       var sendVerifyLink = await account.createVerification(
         "http://localhost:5173/verify"
       );
       if (sendVerifyLink) {
-        alert("Verification e-mail Sent");
-        navigate("/login");
+        alert("Verification link Sent");
+        reset();
       }
     } catch (error) {
       setFormError(error.message);
@@ -184,8 +186,10 @@ const SignupForm = () => {
               Sign Up
             </button>
           </div>
+          <Link to="/login">Already Have An Account?</Link>
           {formError && <div className="text-red-600">{formError}</div>}
         </form>
+        
       </div>
     </div>
   );

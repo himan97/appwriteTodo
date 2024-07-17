@@ -18,7 +18,7 @@ const Header = () => {
             Notebook.
           </span>
         </div>
-        <div className="flex  flex-wrap justify-between w-[25%]">
+        <div className="flex  flex-wrap justify-between w-[35%]">
           {authStatus && (
             <NavLink
               to="/"
