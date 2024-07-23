@@ -47,7 +47,7 @@ const SignupForm = () => {
       await account.create(ID.unique(), email, password, name);
       await account.createEmailPasswordSession(email, password);
       const sendVerifyLink = await account.createVerification(
-        "http://localhost:5173/verify"
+        import.meta.env.VITE_VERIFY_PAGE_LINK
       );
       if (sendVerifyLink) {
         alert("Verification link Sent. Please check your email.");
