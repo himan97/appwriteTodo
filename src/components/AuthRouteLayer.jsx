@@ -18,7 +18,11 @@ function ProtectedRouteLayer({ children, authentication = true }) {
   }, [authStatus, navigate, authentication]);
 
   
-  return loading ? <Spinner/> : <>{children}</>;
+  return loading ? 
+  (setTimeout(() => {
+    <Spinner/> 
+  }, 3000)): 
+  (<>{children}</>)
 }
 
 export default ProtectedRouteLayer;

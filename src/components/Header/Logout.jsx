@@ -1,5 +1,5 @@
 import React from "react";
-import account from "../../appwrite/config";
+import {account} from "../../appwrite/config";
 import { useDispatch } from "react-redux";
 import { logout as authLogout } from "../../store/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -20,12 +20,13 @@ const Logout = () => {
     <>
       <div
         className="cursor-pointer
-         hover:text-green-700
+         hover:text-green-600
                font-bold
-             bg-slate-700
-              text-orange-700
-           rounded-tr-xl
-             rounded-xl
+             bg-black
+              
+              text-white
+          
+             rounded-lg
              
              px-2
              py-2

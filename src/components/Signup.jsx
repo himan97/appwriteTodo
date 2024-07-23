@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useForm } from "react-hook-form";
-import account from "../appwrite/config";
+import { account } from "../appwrite/config";
 import { ID } from "appwrite";
-import { Link , useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'; 
 
 const SignupForm = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -19,11 +17,10 @@ const SignupForm = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [formError, setFormError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Get the value of password field to compare with confirm password
   const password = watch("password");
 
-  // togglePasswordVisibility is a function of Hide/Show password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -44,57 +41,66 @@ const SignupForm = () => {
   };
 
   const registerData = async ({ email, password, name }) => {
+    setLoading(true);
+    setFormError("");
     try {
-      var createUser = await account.create(ID.unique(), email, password, name);
-      var session = await account.createEmailPasswordSession(email, password);
-      var sendVerifyLink = await account.createVerification(
+      await account.create(ID.unique(), email, password, name);
+      await account.createEmailPasswordSession(email, password);
+      const sendVerifyLink = await account.createVerification(
         "http://localhost:5173/verify"
       );
       if (sendVerifyLink) {
-        alert("Verification link Sent");
+        alert("Verification link Sent. Please check your email.");
+        await account.deleteSession("current");
         reset();
       }
     } catch (error) {
       setFormError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center h-screen">
-      <div className="w-full max-w-md">
+    <div className="bg-gray-50 flex items-center justify-center min-h-screen p-6">
+      <div className="w-full max-w-md bg-white border border-gray-200 shadow-lg rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Sign Up</h1>
         <form
-          className="bg-white shadow-md rounded-xl px-8 pt-6 pb-8 mb-4"
+          className="space-y-6"
           onSubmit={handleSubmit(create)}
         >
-          <div className="mb-4">
+          <div>
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="username"
             >
               Username
             </label>
             <input
-              className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`w-full border rounded-lg py-3 px-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
               id="username"
               type="text"
               placeholder="Username"
               {...register("name", { required: "Username is required" })}
             />
             {errors.name && (
-              <p className="text-red-500 text-xs italic">
-                {errors.name.message}
-              </p>
+              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
             )}
           </div>
-          <div className="mb-4">
+
+          <div>
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="email"
             >
               Email
             </label>
             <input
-              className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`w-full border rounded-lg py-3 px-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
               id="email"
               type="email"
               placeholder="Email"
@@ -107,20 +113,21 @@ const SignupForm = () => {
               })}
             />
             {errors.email && (
-              <p className="text-red-500 text-xs italic">
-                {errors.email.message}
-              </p>
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
             )}
           </div>
-          <div className="mb-4 relative">
+
+          <div className="relative">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="password"
             >
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+              className={`w-full border rounded-lg py-3 px-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-12 ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              }`}
               id="password"
               type={passwordVisible ? "text" : "password"}
               placeholder="********"
@@ -129,28 +136,31 @@ const SignupForm = () => {
             <button
               type="button"
               id="password-toggle"
-              className="absolute inset-y-8 right-0 px-3 text-gray-700"
+              className="absolute inset-y-14 right-0 px-3 flex items-center text-gray-600"
               onClick={togglePasswordVisibility}
             >
-              <i
-                className={passwordVisible ? "fas fa-eye-slash" : "fas fa-eye"}
-              ></i>
+              {passwordVisible ? (
+                <EyeSlashIcon className="w-5 h-5" />
+              ) : (
+                <EyeIcon className="w-5 h-5" />
+              )}
             </button>
             {errors.password && (
-              <p className="text-red-500 text-xs italic">
-                {errors.password.message}
-              </p>
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
             )}
           </div>
-          <div className="mb-4 relative">
+
+          <div className="relative">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="confirm-password"
             >
               Confirm Password
             </label>
             <input
-              className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+              className={`w-full border rounded-lg py-3 px-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-12 ${
+                errors.confirmPassword ? "border-red-500" : "border-gray-300"
+              }`}
               id="confirm-password"
               type={confirmPasswordVisible ? "text" : "password"}
               placeholder="********"
@@ -163,33 +173,43 @@ const SignupForm = () => {
             <button
               type="button"
               id="confirm-password-toggle"
-              className="absolute inset-y-8 right-0 px-3 text-gray-700"
+              className="absolute inset-y-14 right-0 px-3 flex items-center text-gray-600"
               onClick={toggleConfirmPasswordVisibility}
             >
-              <i
-                className={
-                  confirmPasswordVisible ? "fas fa-eye-slash" : "fas fa-eye"
-                }
-              ></i>
+              {confirmPasswordVisible ? (
+                <EyeSlashIcon className="w-5 h-5" />
+              ) : (
+                <EyeIcon className="w-5 h-5" />
+              )}
             </button>
             {errors.confirmPassword && (
-              <p className="text-red-600 text-xs italic ">
-                {errors.confirmPassword.message}
-              </p>
+              <p className="text-red-600 text-xs mt-1">{errors.confirmPassword.message}</p>
             )}
           </div>
+
+          {formError && (
+            <div className="text-red-600 text-xs mb-4">{formError}</div>
+          )}
+
           <div className="flex items-center justify-center">
             <button
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline"
+              className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               type="submit"
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </button>
           </div>
-          <Link to="/login">Already Have An Account?</Link>
-          {formError && <div className="text-red-600">{formError}</div>}
+
+          <Link
+            to="/login"
+            className="block text-center mt-4 text-blue-500 hover:underline text-sm"
+          >
+            Already Have An Account?
+          </Link>
         </form>
-        
       </div>
     </div>
   );
