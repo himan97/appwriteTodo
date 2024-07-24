@@ -56,7 +56,7 @@ const Header = () => {
     <div className="w-full h-[75px] px-10 py-4 flex justify-between bg-blue-600 text-center">
       <div className="flex flex-wrap place-items-center rounded">
         <img
-          src="../../../src/images/notebook.png"
+          src="/images/notebook.png"
           alt="logo"
           className="w-auto h-[40px] rounded"
         />
