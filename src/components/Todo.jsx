@@ -10,6 +10,7 @@ import {
   PlusIcon,
   CircleStackIcon
 } from '@heroicons/react/24/solid'; 
+
 const Todo = () => {
   const [todoList, setTodoList] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
@@ -23,7 +24,10 @@ const Todo = () => {
       const { documents } = await database.listDocuments(
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
         import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-        [Query.equal("userId", userId)]
+        [
+          Query.equal("userId", userId),
+          Query.orderDesc("createdAt") // Order by recently added
+        ]
       );
       setTodoList(documents);
     } catch (error) {
@@ -52,7 +56,11 @@ const Todo = () => {
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
         import.meta.env.VITE_APPWRITE_COLLECTION_ID,
         ID.unique(),
-        { todo, userId }
+        { 
+          todo, 
+          userId, 
+          createdAt: new Date().toISOString() // Add createdAt field
+        }
       );
       fetchDocuments(userId);
       reset();
@@ -217,7 +225,6 @@ const Todo = () => {
                     onClick={saveTask}
                   >
                     <CheckIcon className="w-5 h-5 inline" />
-                    
                   </button>
                   <button
                     className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1 px-3 rounded transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 ml-2"
@@ -227,7 +234,6 @@ const Todo = () => {
                     }}
                   >
                     <XMarkIcon className="w-5 h-5 inline" />
-                   
                   </button>
                 </>
               ) : (
@@ -239,14 +245,12 @@ const Todo = () => {
                       onClick={() => startEditing(todo)}
                     >
                       <PencilSquareIcon className="w-5 h-5 inline" />
-                      
                     </button>
                     <button
                       className="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 ml-2"
                       onClick={() => deleteTask(todo.$id)}
                     >
                       <TrashIcon className="w-5 h-5 inline" />
-                      
                     </button>
                   </div>
                 </>

@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { account } from "../../appwrite/config"; // Import Appwrite config
 import Logout from "./Logout";
+import SettingsBtn from "./ProfileSettingButton";
 
 const Header = () => {
   const authStatus = useSelector((state) => state.auth.status);
@@ -157,6 +158,9 @@ const Header = () => {
                 <div className="p-4 border-b border-gray-300">
                   <p className="font-bold">{user ? user.name : "User"}</p>
                   <p className="text-sm">{user ? user.email : "Email not available"}</p>
+                </div>
+                <div>
+                  <SettingsBtn/>
                 </div>
                 <div className="p-2 hover:bg-gray-200">
                   <Logout />
