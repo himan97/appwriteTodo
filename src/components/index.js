@@ -9,7 +9,7 @@ import Footer from './Footer/Footer.jsx'
 import Verify from './Verify.jsx'
 import Authlayer from './AuthRouteLayer.jsx'
 import Spinner from './Spinner.jsx'
-import ProfileSettings from './ProfileSettings.jsx'
+
 
 export {
     Todo,
@@ -23,6 +23,5 @@ export {
     Verify,
     Authlayer,
     Spinner,
-    ProfileSettings
-    
+     
 }

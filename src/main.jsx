@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import {Todo,Contact,Github,About,Login,Signup,Verify, Authlayer,ProfileSettings} from './components/index.js'
+import {Todo,Contact,Github,About,Login,Signup,Verify, Authlayer} from './components/index.js'
 import store from './store/store.js'
 import { Provider } from 'react-redux'
 
@@ -40,13 +40,6 @@ const router = createBrowserRouter([
         element:(
         <Authlayer authentication>
           <Github/>
-        </Authlayer>)
-      },
-      {
-        path:'/settings',
-        element:(
-        <Authlayer authentication>
-          <ProfileSettings/>
         </Authlayer>)
       },
       {

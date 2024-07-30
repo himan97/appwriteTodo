@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { account } from "../../appwrite/config"; // Import Appwrite config
 import Logout from "./Logout";
-import SettingsBtn from "./ProfileSettingButton";
+
 
 const Header = () => {
   const authStatus = useSelector((state) => state.auth.status);
@@ -136,8 +136,9 @@ const Header = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className="flex items-center bg-blue-700 text-white px-4 py-2 rounded"
+              className="flex items-center  bg-blue-700 text-white px-4 py-2 rounded"
             >
+              
               {user ? user.name : "User"}
               <svg
                 className={`ml-2 w-4 h-4 transform ${dropdownOpen ? "rotate-180" : "rotate-0"}`}
@@ -154,17 +155,17 @@ const Header = () => {
               </svg>
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white text-gray-700 border border-gray-300 rounded shadow-lg hover:bg-gray-100">
-                <div className="p-4 border-b border-gray-300">
-                  <p className="font-bold">{user ? user.name : "User"}</p>
+              <div className="absolute right-0 mt-2 w-48 border-double border-2 bg-white text-gray-700  border-slate-400 rounded shadow-lg hover:bg-gray-100">
+                <div className="p-4 flex justify-center items-center flex-col">
+                
+                  <p className="font-semibold">{user ? user.name : "User"}</p>
                   <p className="text-sm">{user ? user.email : "Email not available"}</p>
-                </div>
-                <div>
-                  <SettingsBtn/>
-                </div>
+                 
                 <div className="p-2 hover:bg-gray-200">
                   <Logout />
                 </div>
+                </div>
+               
               </div>
             )}
           </div>
