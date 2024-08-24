@@ -8,8 +8,8 @@ import {
   CheckIcon,
   XMarkIcon,
   PlusIcon,
-  CircleStackIcon
-} from '@heroicons/react/24/solid'; 
+  CircleStackIcon,
+} from "@heroicons/react/24/solid";
 
 const Todo = () => {
   const [todoList, setTodoList] = useState([]);
@@ -26,7 +26,7 @@ const Todo = () => {
         import.meta.env.VITE_APPWRITE_COLLECTION_ID,
         [
           Query.equal("userId", userId),
-          Query.orderDesc("createdAt") // Order by recently added
+          Query.orderDesc("createdAt"), // Order by recently added
         ]
       );
       setTodoList(documents);
@@ -56,10 +56,10 @@ const Todo = () => {
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
         import.meta.env.VITE_APPWRITE_COLLECTION_ID,
         ID.unique(),
-        { 
-          todo, 
-          userId, 
-          createdAt: new Date().toISOString() // Add createdAt field
+        {
+          todo,
+          userId,
+          createdAt: new Date().toISOString(), // Add createdAt field
         }
       );
       fetchDocuments(userId);
@@ -123,7 +123,6 @@ const Todo = () => {
       console.error("Error deleting all tasks:", error);
     }
   };
-
   // Start editing a specific task
   const startEditing = (todo) => {
     setEditingId(todo.$id);
@@ -170,23 +169,27 @@ const Todo = () => {
 
   return (
     <div className="bg-gray-50 flex items-center justify-center min-h-screen p-8">
-      <div className="w-full max-w-2xl bg-white border border-gray-200 shadow-lg rounded-lg p-6">
-        <h1 className="text-center text-4xl font-extrabold text-gray-800 mb-6">
+      <div className="w-full max-w-2xl bg-white border border-gray-200 shadow-lg rounded-lg p-4 md:p-6">
+        <h1 className="text-center text-3xl md:text-4xl font-extrabold text-gray-800 mb-4 md:mb-6">
           Todo List
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex items-center mb-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col md:flex-row items-center mb-4 md:mb-6"
+        >
           <input
-            className="flex-grow border border-gray-300 rounded-l-lg py-3 px-4 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 ease-in-out"
+            className="w-full md:flex-grow border border-gray-300 rounded-lg md:rounded-r-none py-2 px-3 md:py-3 md:px-4 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 ease-in-out mb-2 md:mb-0"
             type="text"
             placeholder="Add a new task"
             {...register("todo", { required: true })}
           />
           <button
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg py-3 px-6 rounded-r-lg transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-1/2 md:w-auto h-[51px] bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base py-2 px-4 md:py-3 md:px-6 rounded-lg md:rounded-l-none transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="submit"
           >
-            <PlusIcon className="w-5 h-5 inline" />
-            Add Task
+            <PlusIcon className="w-5 h-5 inline-block md:mr-2" />
+            <span className="inline-block md:hidden">Add Task</span>
+          
           </button>
         </form>
         {todoList.length > 0 && (
@@ -266,7 +269,11 @@ const Todo = () => {
                   ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
                   : "bg-red-600 hover:bg-red-700 focus:ring-red-500"
               }`}
-              onClick={selectedTasks.length === todoList.length ? deleteAllTasks : deleteSelectedTasks}
+              onClick={
+                selectedTasks.length === todoList.length
+                  ? deleteAllTasks
+                  : deleteSelectedTasks
+              }
               disabled={selectedTasks.length === 0}
             >
               {selectedTasks.length === todoList.length ? (
