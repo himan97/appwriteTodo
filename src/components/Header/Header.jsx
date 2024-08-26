@@ -53,7 +53,7 @@ const Header = () => {
   };
 
   return (
-    <div className="w-full h-[75px] px-10 py-4 flex justify-between bg-blue-600 text-center">
+    <div className="w-full h-[75px] px-10 py-4 flex justify-between bg-indigo-600 text-center">
       <div className="flex items-center">
         <img
           src="/images/notebook.png"
@@ -131,13 +131,13 @@ const Header = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className="flex items-center bg-blue-700 text-white px-4 py-2 rounded"
+              className="flex items-center bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-md transition duration-200"
             >
-              {user ? user.name : "User"}
+              <span className="mr-2">{user ? user.name : "User"}</span>
               <svg
-                className={`ml-2 w-4 h-4 transform ${
+                className={`w-4 h-4 transform ${
                   dropdownOpen ? "rotate-180" : "rotate-0"
-                }`}
+                } transition-transform duration-200`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -151,43 +151,43 @@ const Header = () => {
               </svg>
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 border-double border-2 bg-white text-gray-700 border-slate-400 rounded shadow-lg hover:bg-gray-100">
-                <div className="p-4 flex justify-center items-center flex-col">
-                  <p className="font-semibold">{user ? user.name : "User"}</p>
-                  <p className="text-sm">
-                    {user ? user.email : "Email not available"}
-                  </p>
-                  <div className="md:hidden w-full mt-2">
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-20">
+                <div className="py-2 px-4 bg-gray-100 border-b border-gray-200">
+                  <p className="text-sm font-medium text-gray-800">{user ? user.name : "User"}</p>
+                  <p className="text-xs text-gray-600">{user ? user.email : "Email not available"}</p>
+                </div>
+                <div className="py-2">
+                  <div className="md:hidden">
                     <NavLink
                       to="/"
-                      className="block font-bold hover:text-black hover:font-extrabold px-2 py-2 text-gray-800"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900"
                       onClick={toggleDropdown}
                     >
-                      DASHBOARD
+                      Dashboard
                     </NavLink>
                     <NavLink
                       to="about"
-                      className="block font-bold hover:text-black hover:font-extrabold px-2 py-2 text-gray-800"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900"
                       onClick={toggleDropdown}
                     >
-                      ABOUT
+                      About
                     </NavLink>
                     <NavLink
                       to="contact"
-                      className="block font-bold hover:text-black hover:font-extrabold px-2 py-2 text-gray-800"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900"
                       onClick={toggleDropdown}
                     >
-                      CONTACT
+                      Contact
                     </NavLink>
                     <NavLink
                       to="github"
-                      className="block font-bold hover:text-black hover:font-extrabold px-2 py-2 text-gray-800"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-900"
                       onClick={toggleDropdown}
                     >
-                      GITHUB
+                      GitHub
                     </NavLink>
                   </div>
-                  <div className="p-2 hover:bg-gray-200 w-full mt-2">
+                  <div className="px-4 py-2 border-t border-gray-200">
                     <Logout />
                   </div>
                 </div>

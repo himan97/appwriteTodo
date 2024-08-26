@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { useForm } from "react-hook-form";
 import { account, database } from "../appwrite/config";
 import { ID, Query } from "appwrite";
@@ -10,28 +10,92 @@ import {
   PlusIcon,
   CircleStackIcon,
 } from "@heroicons/react/24/solid";
+import SkeletonLoader from './SkeletonLoader';
+
+const TodoItem = memo(({ todo, onEdit, onDelete, onSelect, isSelected, isEditing, editingText, onEditingTextChange, onSave, onCancelEdit }) => {
+  return (
+    <li className="flex items-center justify-between p-3 bg-gray-50 rounded-lg transition duration-150 ease-in-out hover:bg-gray-100">
+      <div className="flex items-center flex-1 mr-4">
+        <input
+          type="checkbox"
+          className="form-checkbox h-5 w-5 text-indigo-600 transition duration-150 ease-in-out"
+          checked={isSelected}
+          onChange={() => onSelect(todo.$id)}
+        />
+        {isEditing ? (
+          <input
+            className="ml-3 flex-1 border-b-2 border-indigo-500 bg-transparent py-1 px-2 text-gray-700 focus:outline-none"
+            type="text"
+            value={editingText}
+            onChange={(e) => onEditingTextChange(e.target.value)}
+          />
+        ) : (
+          <span className={`ml-3 ${isSelected ? 'line-through text-gray-500' : 'text-gray-700'}`}>
+            {todo.todo}
+          </span>
+        )}
+      </div>
+      <div className="flex items-center">
+        {isEditing ? (
+          <>
+            <button
+              className="text-green-600 hover:text-green-800 mr-2 focus:outline-none"
+              onClick={onSave}
+            >
+              <CheckIcon className="w-5 h-5" />
+            </button>
+            <button
+              className="text-gray-600 hover:text-gray-800 focus:outline-none"
+              onClick={onCancelEdit}
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="text-indigo-600 hover:text-indigo-800 mr-2 focus:outline-none"
+              onClick={() => onEdit(todo)}
+            >
+              <PencilSquareIcon className="w-5 h-5" />
+            </button>
+            <button
+              className="text-red-600 hover:text-red-800 focus:outline-none"
+              onClick={() => onDelete(todo.$id)}
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          </>
+        )}
+      </div>
+    </li>
+  );
+});
 
 const Todo = () => {
   const [todoList, setTodoList] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const { register, handleSubmit, reset } = useForm();
 
-  // Fetch todos from the database
   const fetchDocuments = useCallback(async (userId) => {
+    setIsLoading(true);
     try {
       const { documents } = await database.listDocuments(
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
         import.meta.env.VITE_APPWRITE_COLLECTION_ID,
         [
           Query.equal("userId", userId),
-          Query.orderDesc("createdAt"), // Order by recently added
+          Query.orderDesc("createdAt"),
         ]
       );
       setTodoList(documents);
     } catch (error) {
       console.error("Error fetching tasks:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -43,8 +107,7 @@ const Todo = () => {
     loadTodos();
   }, [fetchDocuments]);
 
-  // Add a new todo task
-  const onSubmit = async (data) => {
+  const onSubmit = useCallback(async (data) => {
     const { todo } = data;
     if (!todo.trim()) return;
 
@@ -59,7 +122,7 @@ const Todo = () => {
         {
           todo,
           userId,
-          createdAt: new Date().toISOString(), // Add createdAt field
+          createdAt: new Date().toISOString(),
         }
       );
       fetchDocuments(userId);
@@ -67,10 +130,9 @@ const Todo = () => {
     } catch (error) {
       console.error("Error adding task:", error);
     }
-  };
+  }, [fetchDocuments, reset]);
 
-  // Delete a single todo task
-  const deleteTask = async (documentId) => {
+  const deleteTask = useCallback(async (documentId) => {
     try {
       await database.deleteDocument(
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
@@ -82,10 +144,9 @@ const Todo = () => {
     } catch (error) {
       console.error("Error deleting task:", error);
     }
-  };
+  }, [fetchDocuments]);
 
-  // Delete selected tasks
-  const deleteSelectedTasks = async () => {
+  const deleteSelectedTasks = useCallback(async () => {
     try {
       await Promise.all(
         selectedTasks.map((documentId) =>
@@ -102,10 +163,9 @@ const Todo = () => {
     } catch (error) {
       console.error("Error deleting selected tasks:", error);
     }
-  };
+  }, [selectedTasks, fetchDocuments]);
 
-  // Delete all tasks
-  const deleteAllTasks = async () => {
+  const deleteAllTasks = useCallback(async () => {
     try {
       await Promise.all(
         todoList.map((todo) =>
@@ -122,15 +182,14 @@ const Todo = () => {
     } catch (error) {
       console.error("Error deleting all tasks:", error);
     }
-  };
-  // Start editing a specific task
-  const startEditing = (todo) => {
+  }, [todoList, fetchDocuments]);
+
+  const startEditing = useCallback((todo) => {
     setEditingId(todo.$id);
     setEditingText(todo.todo);
-  };
+  }, []);
 
-  // Save the edited task
-  const saveTask = async () => {
+  const saveTask = useCallback(async () => {
     if (!editingText.trim()) return;
 
     try {
@@ -147,152 +206,106 @@ const Todo = () => {
     } catch (error) {
       console.error("Error updating task:", error);
     }
-  };
+  }, [editingId, editingText, fetchDocuments]);
 
-  // Handle task selection
-  const handleSelectTask = (documentId) => {
+  const handleSelectTask = useCallback((documentId) => {
     setSelectedTasks((prevSelected) =>
       prevSelected.includes(documentId)
         ? prevSelected.filter((id) => id !== documentId)
         : [...prevSelected, documentId]
     );
-  };
+  }, []);
 
-  // Handle select all tasks
-  const handleSelectAll = () => {
+  const handleSelectAll = useCallback(() => {
     setSelectedTasks((prevSelected) =>
       prevSelected.length === todoList.length
         ? []
         : todoList.map((todo) => todo.$id)
     );
-  };
+  }, [todoList]);
+
+  const memoizedTodoList = useMemo(() => todoList, [todoList]);
 
   return (
-    <div className="bg-gray-50 flex items-center justify-center min-h-screen p-8">
-      <div className="w-full max-w-2xl bg-white border border-gray-200 shadow-lg rounded-lg p-4 md:p-6">
-        <h1 className="text-center text-3xl md:text-4xl font-extrabold text-gray-800 mb-4 md:mb-6">
-          Todo List
-        </h1>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col md:flex-row items-center mb-4 md:mb-6"
-        >
-          <input
-            className="w-full md:flex-grow border border-gray-300 rounded-lg md:rounded-r-none py-2 px-3 md:py-3 md:px-4 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 ease-in-out mb-2 md:mb-0"
-            type="text"
-            placeholder="Add a new task"
-            {...register("todo", { required: true })}
-          />
-          <button
-            className="w-1/2 md:w-auto h-[51px] bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base py-2 px-4 md:py-3 md:px-6 rounded-lg md:rounded-l-none transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="submit"
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="bg-indigo-600 px-6 py-4">
+          <h1 className="text-3xl font-bold text-white">Todo List</h1>
+        </div>
+        <div className="p-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex items-center mb-6"
           >
-            <PlusIcon className="w-5 h-5 inline-block md:mr-2" />
-            <span className="inline-block md:hidden">Add Task</span>
-          
-          </button>
-        </form>
-        {todoList.length > 0 && (
-          <div className="flex items-center mb-6">
             <input
-              type="checkbox"
-              className="mr-2"
-              checked={selectedTasks.length === todoList.length}
-              onChange={handleSelectAll}
+              className="flex-grow border-2 border-gray-300 rounded-l-lg py-2 px-4 mr-0 text-gray-700 focus:outline-none focus:border-indigo-500 transition duration-200"
+              type="text"
+              placeholder="Add a new task"
+              {...register("todo", { required: "Task cannot be empty" })}
             />
-            <span>Select All</span>
-          </div>
-        )}
-        <div className="text-center text-gray-600 text-lg font-medium">
-          {todoList.map((todo) => (
-            <div
-              key={todo.$id}
-              className="flex justify-between items-center p-2 border-b border-gray-200"
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-r-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+              type="submit"
             >
-              <input
-                type="checkbox"
-                className="mr-2"
-                checked={selectedTasks.includes(todo.$id)}
-                onChange={() => handleSelectTask(todo.$id)}
-              />
-              {editingId === todo.$id ? (
-                <>
-                  <input
-                    className="flex-grow border border-gray-300 rounded-l-lg py-3 px-4 text-gray-700 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    type="text"
-                    value={editingText}
-                    onChange={(e) => setEditingText(e.target.value)}
-                  />
-                  <button
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 ml-2"
-                    onClick={saveTask}
-                  >
-                    <CheckIcon className="w-5 h-5 inline" />
-                  </button>
-                  <button
-                    className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1 px-3 rounded transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 ml-2"
-                    onClick={() => {
+              <PlusIcon className="w-5 h-5 inline-block" />
+              <span className="ml-2 hidden sm:inline-block">Add Task</span>
+            </button>
+          </form>
+          
+          {isLoading ? (
+            <SkeletonLoader />
+          ) : (
+            <>
+              {memoizedTodoList.length > 0 && (
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-200">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-5 w-5 text-indigo-600 transition duration-150 ease-in-out"
+                      checked={selectedTasks.length === memoizedTodoList.length}
+                      onChange={handleSelectAll}
+                    />
+                    <span className="ml-2 text-gray-700">Select All</span>
+                  </div>
+                  {selectedTasks.length > 0 && (
+                    <button
+                      className="text-red-600 hover:text-red-800 font-medium transition duration-150 ease-in-out"
+                      onClick={selectedTasks.length === memoizedTodoList.length ? deleteAllTasks : deleteSelectedTasks}
+                    >
+                      {selectedTasks.length === memoizedTodoList.length ? 'Delete All' : 'Delete Selected'}
+                    </button>
+                  )}
+                </div>
+              )}
+              <ul className="space-y-2">
+                {memoizedTodoList.map((todo) => (
+                  <TodoItem
+                    key={todo.$id}
+                    todo={todo}
+                    onEdit={startEditing}
+                    onDelete={deleteTask}
+                    onSelect={handleSelectTask}
+                    isSelected={selectedTasks.includes(todo.$id)}
+                    isEditing={editingId === todo.$id}
+                    editingText={editingText}
+                    onEditingTextChange={setEditingText}
+                    onSave={saveTask}
+                    onCancelEdit={() => {
                       setEditingId(null);
                       setEditingText("");
                     }}
-                  >
-                    <XMarkIcon className="w-5 h-5 inline" />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span>{todo.todo}</span>
-                  <div>
-                    <button
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 rounded transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 ml-2"
-                      onClick={() => startEditing(todo)}
-                    >
-                      <PencilSquareIcon className="w-5 h-5 inline" />
-                    </button>
-                    <button
-                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 ml-2"
-                      onClick={() => deleteTask(todo.$id)}
-                    >
-                      <TrashIcon className="w-5 h-5 inline" />
-                    </button>
-                  </div>
-                </>
+                  />
+                ))}
+              </ul>
+              {memoizedTodoList.length === 0 && (
+                <p className="text-center text-gray-500 mt-6">No tasks yet. Add a new task to get started!</p>
               )}
-            </div>
-          ))}
+            </>
+          )}
         </div>
-        {todoList.length > 0 && selectedTasks.length > 0 && (
-          <div className="mt-6 flex justify-center">
-            <button
-              className={`text-lg font-semibold py-3 px-6 rounded transition duration-200 ease-in-out flex justify-center items-center ${
-                selectedTasks.length === todoList.length
-                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
-                  : "bg-red-600 hover:bg-red-700 focus:ring-red-500"
-              }`}
-              onClick={
-                selectedTasks.length === todoList.length
-                  ? deleteAllTasks
-                  : deleteSelectedTasks
-              }
-              disabled={selectedTasks.length === 0}
-            >
-              {selectedTasks.length === todoList.length ? (
-                <>
-                  <CircleStackIcon className="w-5 h-5 inline" />
-                  Delete All
-                </>
-              ) : (
-                <>
-                  <TrashIcon className="w-5 h-5 inline" />
-                  Delete Selected Tasks
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
-export default Todo;
+export default memo(Todo);
